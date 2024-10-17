@@ -130,8 +130,6 @@ class Scanner {
         TokenType type = keywords.get(text);
         if (type == null) type = IDENTIFIER;
         addToken(type);
-
-        addToken(IDENTIFIER);
     }
     private void number() {
         while (isDigit(peek())) advance();
