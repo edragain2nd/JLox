@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 class Interpreter implements Expr.Visitor<Object>,
         Stmt.Visitor<Void> {
-
+    private     static class BreakException extends RuntimeException {}
+    private static class ContinueException extends RuntimeException {}
     final Environment globals = new Environment();
     private Environment environment = globals;
     private final Map<Expr, Integer> locals = new HashMap<>();
@@ -221,11 +222,17 @@ class Interpreter implements Expr.Visitor<Object>,
     }
     @Override
     public Void visitWhileStmt(Stmt.While stmt) {
+       try{
         while (isTruthy(evaluate(stmt.condition))) {
-            execute(stmt.body);
-        }
+            try {
+                execute(stmt.body);
+            } catch (ContinueException ex) {
+                continue;
+            }
+        }}catch (BreakException ex){}
         return null;
     }
+
     @Override
     public Object visitAssignExpr(Expr.Assign expr) {
         Object value = evaluate(expr.value);
@@ -333,5 +340,12 @@ class Interpreter implements Expr.Visitor<Object>,
 
         throw new RuntimeError(operator, "Operands must be numbers.");
     }
-
+    @Override
+    public Void visitBreakStmt(Stmt.Break stmt) {
+        throw new BreakException();
+    }
+    @Override
+    public Void visitContinueStmt(Stmt.Continue stmt) {
+        throw new ContinueException();
+    }
 }

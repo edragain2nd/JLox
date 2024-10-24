@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import static com.craftinginterpreters.lox.TokenType.SEMICOLON;
+
 class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
@@ -98,6 +100,14 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolve(stmt.condition);
         resolve(stmt.body);
         return null;
+    }
+    @Override
+    public Void visitBreakStmt(Stmt.Break stmt) {
+        return null;
+    }
+    @Override
+    public Void visitContinueStmt(Stmt.Continue stmt) {
+       return null;
     }
     @Override
     public Void visitAssignExpr(Expr.Assign expr) {
